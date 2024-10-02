@@ -20,11 +20,11 @@ return {
         return {}
     end,
     theme = "wave", -- Load "wave" theme when 'background' option is not set
-    background = { -- map the value of 'background' option to a theme
-        dark = "wave", -- try "dragon" !
-        light = "lotus",
-    },
-    -- Configure LazyVim to load gruvbox
+    --background = { -- map the value of 'background' option to a theme
+    --    dark = "wave", -- try "dragon" !
+    --    light = "lotus",
+    --},
+    -- Configure LazyVim to load Kanagawa
     {
         "LazyVim/LazyVim",
         opts = {
