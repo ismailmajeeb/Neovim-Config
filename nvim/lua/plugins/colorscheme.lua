@@ -1,34 +1,76 @@
 return {
-    --add vim-code-dark Theme
-    { "tomasiser/vim-code-dark" },
-
-    --add Kanagawa Theme
-    { "rebelot/kanagawa.nvim" },
-    commentStyle = { italic = true },
-    functionStyle = {},
-    keywordStyle = { italic = true },
-    statementStyle = { bold = true },
-    typeStyle = {},
-    transparent = false, -- do not set background color
-    dimInactive = false, -- dim inactive window `:h hl-NormalNC`
-    --terminalColors = true,       -- define vim.g.terminal_color_{0,17}
-    colors = { -- add/modify theme and palette colors
-        palette = {},
-        theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+    -- Kanagawa Theme
+    {
+        "rebelot/kanagawa.nvim",
+        opts = {
+            commentStyle = { italic = true },
+            functionStyle = {},
+            keywordStyle = { italic = true },
+            statementStyle = { bold = true },
+            typeStyle = {},
+            transparent = true,
+            dimInactive = false,
+            colors = {
+                palette = {},
+                theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+            },
+            overrides = function(colors)
+                return {}
+            end,
+            theme = "wave",
+        },
+        config = function(_, opts)
+            require("kanagawa").setup(opts)
+            -- Remove vim.cmd.colorscheme() here
+        end,
     },
-    overrides = function(colors) -- add/modify highlights
-        return {}
-    end,
-    theme = "wave", -- Load "wave" theme when 'background' option is not set
-    --background = { -- map the value of 'background' option to a theme
-    --    dark = "wave", -- try "dragon" !
-    --    light = "lotus",
-    --},
-    -- Configure LazyVim to load Kanagawa
+
+    -- TokyoDark Theme
+    {
+        "tiagovla/tokyodark.nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require("tokyodark").setup({
+                transparent_background = false,
+                gamma = 1.0,
+                styles = {
+                    comments = { italic = true, bold = true },
+                    keywords = { bold = true },
+                    identifiers = { italic = true },
+                    functions = { bold = true },
+                    variables = { bold = true },
+                },
+                terminal_colors = true,
+            })
+            -- Remove vim.cmd.colorscheme() here
+        end,
+    },
+
+    -- Ofirkai Theme
+    {
+        "ofirgall/ofirkai.nvim",
+        lazy = false,
+        priority = 1001, -- Higher priority than TokyoDark
+        config = function()
+            -- Initialize but don't set colorscheme here
+        end,
+    },
+
+    -- Ofirkai Theme
+    {
+        "ellisonleao/gruvbox.nvim",
+        lazy = false,
+        config = function()
+            -- Initialize but don't set colorscheme here
+        end,
+    },
+    -- LazyVim config (MUST COME LAST)
     {
         "LazyVim/LazyVim",
         opts = {
-            colorscheme = "kanagawa",
+            colorscheme = "tokyodark",
         },
+        priority = 10000, -- Highest priority to ensure it loads last
     },
 }
