@@ -4,23 +4,28 @@
 
 local function compile_latex(engine)
     return function()
-        local file = vim.fn.expand("%:p")
-        local dir = vim.fn.expand("%:p:h")
-        local base = vim.fn.expand("%:r")
+        -- Get paths (convert backslashes to forward slashes for compatibility)
+        local file = vim.fn.expand("%:p"):gsub("\\", "/")
+        local dir = vim.fn.expand("%:p:h"):gsub("\\", "/")
+        local base = vim.fn.expand("%:r"):gsub("\\", "/")
         local pdf = base .. ".pdf"
 
-        -- Save file if modified
+        -- Save file
         vim.cmd("update")
 
-        -- Compile with error handling
+        -- Windows-specific quoting
+        local quoted_file = '"' .. file .. '"'
+        local quoted_dir = '"' .. dir .. '"'
+
+        -- Compilation command
         local cmd = string.format(
-            '%s -interaction=nonstopmode -file-line-error -synctex=1 -shell-escape -output-directory="%s" "%s"',
+            "cd /D %s && %s -interaction=nonstopmode -synctex=1 -shell-escape %s",
+            quoted_dir,
             engine,
-            dir,
-            file
+            quoted_file
         )
 
-        -- Run compilation
+        -- Execute
         local result = vim.fn.system(cmd)
         if vim.v.shell_error ~= 0 then
             vim.api.nvim_err_writeln("Compilation failed")
@@ -30,7 +35,7 @@ local function compile_latex(engine)
 
         -- Open PDF with default viewer
         if vim.fn.has("win32") == 1 then
-            vim.fn.jobstart({ "cmd", "/c", "start", pdf }, { detach = true })
+            vim.fn.jobstart({ "cmd", "/C", "start", "", pdf }, { detach = true, cwd = dir })
         else
             vim.fn.jobstart({ "xdg-open", pdf }, { detach = true })
         end
@@ -40,6 +45,23 @@ end
 vim.api.nvim_create_user_command("Pdflatex", compile_latex("pdflatex"), {})
 vim.api.nvim_create_user_command("Xelatex", compile_latex("xelatex"), {})
 vim.api.nvim_create_user_command("Lualatex", compile_latex("lualatex"), {})
+-------------------------------------------
+-- Loading Default Template
+vim.api.nvim_create_autocmd("BufNewFile", {
+    pattern = "*.tex",
+    callback = function(args)
+        -- Path to your template (adjust as needed)
+        local template_path = vim.fn.expand("E:/LaTeX-Docs/Templates/Default Template.tex")
+
+        -- Only insert template if file is empty (new file)
+        if vim.fn.line("$") == 1 and vim.fn.getline(1) == "" then
+            local lines = vim.fn.readfile(template_path)
+            vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, lines)
+        end
+    end,
+})
+
+-------------------------------------------
 
 -- if you want to treat warnings as errors add this flag to you commad: -Werror
 vim.api.nvim_create_user_command("RunCpp", function()
