@@ -1,17 +1,4 @@
--- In this file I overridden some of lualine plugin configurations and add mine.
-local colors = {
-    bg = "#1a1b2b", -- Choose one of these colors: 1e1a2f, 13142a, 1a1a24
-    fg = "#a0a8cd",
-    blue = "#7a88cf",
-    cyan = "#008080",
-    green = "#6dce87",
-    yellow = "#ECBE7B",
-    orange = "#d7a087",
-    purple = "#b399ef",
-    magenta = "#d091e4",
-    red = "#e05a5a",
-    section_bg = "#1e1a2f",
-}
+-- In this file I overridden some of lualine plugin configurations and added mine.
 
 local conditions = {
     buffer_not_empty = function()
@@ -35,17 +22,7 @@ return {
             require("lualine").setup({
                 options = {
                     icons_enabled = true,
-                    theme = {
-                        normal = {
-                            a = { fg = colors.section_bg, bg = colors.blue, gui = "bold" },
-                            b = { fg = colors.fg, bg = colors.section_bg },
-                            c = { fg = colors.fg, bg = colors.bg },
-                        },
-                        insert = { a = { fg = colors.bg, bg = colors.green } },
-                        visual = { a = { fg = colors.bg, bg = colors.purple } },
-                        replace = { a = { fg = colors.bg, bg = colors.red } },
-                        command = { a = { fg = colors.bg, bg = colors.yellow } },
-                    },
+                    theme = "onedark",
                     component_separators = { left = "", right = "" },
                     section_separators = { left = "", right = "" },
                     disabled_filetypes = {
@@ -53,7 +30,7 @@ return {
                         winbar = {},
                     },
                     always_divide_middle = true,
-                    globalstatus = true, -- Changed to true for proper persistence
+                    globalstatus = true,
                     refresh = {
                         statusline = 100,
                         tabline = 100,
@@ -65,20 +42,7 @@ return {
                         "mode",
                         {
                             function()
-                                return "  "
-                            end,
-                            color = function()
-                                local mode_color = {
-                                    n = colors.blue,
-                                    i = colors.green,
-                                    v = colors.purple,
-                                    c = colors.yellow,
-                                    [""] = colors.purple,
-                                    V = colors.purple,
-                                    R = colors.red,
-                                    t = colors.red,
-                                }
-                                return { bg = mode_color[vim.fn.mode()] }
+                                return " "
                             end,
                             separator = { left = "", right = "" },
                             padding = { right = 0 },
@@ -86,18 +50,19 @@ return {
                     },
                     lualine_b = {
                         {
-                            "filesize",
-                            cond = conditions.buffer_not_empty,
-                            color = { fg = colors.magenta, gui = "bold" },
+                            "branch",
+                            icon = "",
+                            color = { gui = "bold" },
+                            separator = { left = "", right = "" },
+                        },
+                        {
+                            "diff",
+                            symbols = { added = " ", modified = " ", removed = " " },
                         },
                         {
                             "filename",
                             cond = conditions.buffer_not_empty,
-                            color = { fg = colors.magenta, gui = "bold" },
-                        },
-                        {
-                            "%l:%c %p%%|%L",
-                            color = { fg = colors.magenta, gui = "bold" },
+                            color = { gui = "bold" },
                         },
                     },
                     lualine_c = {
@@ -105,23 +70,15 @@ return {
                             "diagnostics",
                             sources = { "nvim_diagnostic" },
                             symbols = { error = " ", warn = " ", info = " " },
-                            colors = {
-                                error = colors.red,
-                                warn = colors.yellow,
-                                info = colors.cyan,
-                            },
-                        },
-                        {
-                            "diff",
-                            symbols = { added = " ", modified = "柳 ", removed = " " },
-                            diff_color = {
-                                added = { fg = colors.green },
-                                modified = { fg = colors.orange },
-                                removed = { fg = colors.red },
-                            },
                         },
                     },
                     lualine_x = {
+                        {
+                            "%l:%c %p%%|%L",
+                            color = { gui = "bold" },
+                        },
+                    },
+                    lualine_y = {
                         {
                             function()
                                 local msg = "No Active Lsp"
@@ -139,29 +96,17 @@ return {
                                 return msg
                             end,
                             icon = "  LSP:",
-                            color = { fg = colors.magenta, gui = "bold" },
+                            color = { gui = "bold" },
                         },
                         { "filetype", colored = true },
-                        { "encoding", fmt = string.upper, color = { fg = colors.cyan } },
-                        { "fileformat", fmt = string.upper, color = { fg = colors.green } },
-                    },
-                    lualine_y = {
-                        {
-                            "branch",
-                            icon = "",
-                            color = { fg = colors.orange, gui = "bold" },
-                            separator = { left = "", right = "" },
-                        },
+                        { "encoding", fmt = string.upper },
+                        { "fileformat", fmt = string.upper },
                     },
                     lualine_z = {
                         {
-                            "diff",
-                            symbols = { added = " ", modified = "柳 ", removed = " " },
-                            diff_color = {
-                                added = { fg = colors.green },
-                                modified = { fg = colors.orange },
-                                removed = { fg = colors.red },
-                            },
+                            "filesize",
+                            cond = conditions.buffer_not_empty,
+                            color = { gui = "bold" },
                         },
                     },
                 },
